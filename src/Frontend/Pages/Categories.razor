@@ -8,19 +8,19 @@
 
 <div class="form-inline mb-3">
     <label class="mr-2">Sort By:</label>
-    <select @bind="sortBy" class="form-control mr-2">
+    <select @bind="sortBy" class="form-control mr-2" @onchange="LoadCategories">
         <option value="Name">Name</option>
         <option value="Description">Description</option>
     </select>
 
     <label class="mr-2">Sort Order:</label>
-    <select @bind="sortOrder" class="form-control mr-2">
+    <select @bind="sortOrder" class="form-control mr-2" @onchange="LoadCategories">
         <option value="Ascending">Ascending</option>
         <option value="Descending">Descending</option>
     </select>
 
     <label class="mr-2">Filter:</label>
-    <InputText @bind-Value="filter" class="form-control mr-2" placeholder="Search..." />
+    <InputText @bind-Value="filter" class="form-control mr-2" @oninput="LoadCategories" placeholder="Search..." />
 
     <button class="btn btn-primary" @onclick="LoadCategories">Apply</button>
 </div>
