@@ -1,5 +1,6 @@
 using Backend.Mediator;
 using Backend.Models.Domain;
+using Backend.Services;
 
 namespace Backend.Features.Products.Requests
 {

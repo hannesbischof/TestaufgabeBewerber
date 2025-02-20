@@ -6,6 +6,7 @@ using AutoMapper;
 using Backend.Models.DTOs;
 using Backend.Mediator;
 using Backend.Features.Categories.Requests;
+using Backend.Models.Domain;
 
 namespace Backend.Controllers
 {

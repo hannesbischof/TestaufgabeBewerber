@@ -12,6 +12,7 @@ using Backend.Services;
 using Backend.Mediator;
 using Backend.Features.Products.Requests;
 using Backend.Features.Categories.Requests;
+using Backend.Models.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
