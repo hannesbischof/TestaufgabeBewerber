@@ -49,6 +49,12 @@ else
         </tbody>
     </table>
 
+    <div class="pagination">
+        <button class="btn btn-secondary" @onclick="GoToPreviousPage" disabled="@(!CanGoToPreviousPage)">Previous</button>
+        <span>Page @currentPage of @totalPages</span>
+        <button class="btn btn-secondary" @onclick="GoToNextPage" disabled="@(!CanGoToNextPage)">Next</button>
+    </div>
+
     <button class="btn btn-primary" @onclick="ShowCreateForm">Add New Category</button>
 
     @if (showCreateForm)
@@ -86,9 +92,42 @@ else
         await LoadCategories();
     }
 
+    private int currentPage = 1;
+    private int pageSize = 10;
+    private int totalPages = 1;
+
     private async Task LoadCategories()
     {
-        categories = await Http.GetFromJsonAsync<List<Category>>("api/categories");
+        var response = await Http.GetFromJsonAsync<PaginatedResponse<Category>>($"api/categories?pageNumber={currentPage}&pageSize={pageSize}");
+        categories = response.Items;
+        totalPages = response.TotalPages;
+    }
+
+    private bool CanGoToPreviousPage => currentPage > 1;
+    private bool CanGoToNextPage => currentPage < totalPages;
+
+    private async Task GoToPreviousPage()
+    {
+        if (CanGoToPreviousPage)
+        {
+            currentPage--;
+            await LoadCategories();
+        }
+    }
+
+    private async Task GoToNextPage()
+    {
+        if (CanGoToNextPage)
+        {
+            currentPage++;
+            await LoadCategories();
+        }
+    }
+
+    public class PaginatedResponse<T>
+    {
+        public List<T> Items { get; set; } = new List<T>();
+        public int TotalPages { get; set; }
     }
 
     private void EditCategory(Category category)
