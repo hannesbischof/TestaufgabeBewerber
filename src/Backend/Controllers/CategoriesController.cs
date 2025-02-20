@@ -53,7 +53,7 @@ namespace Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryDto>> GetCategoryById(int id)
         {
-            var category = await _categoryService.GetCategoryById(id);
+            var category = await _mediator.Send(new GetCategoryByIdRequest(id));
             if (category == null)
             {
                 return NotFound();
@@ -79,7 +79,7 @@ namespace Backend.Controllers
             try
             {
                 var domainCategory = _mapper.Map<DomainCategory>(categoryDto);
-                var createdCategory = await _categoryService.AddCategory(domainCategory);
+                var createdCategory = await _mediator.Send(new AddCategoryRequest(domainCategory));
                 var createdCategoryDto = _mapper.Map<CategoryDto>(createdCategory);
                 return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategoryDto.Id }, createdCategoryDto);
             }
@@ -112,7 +112,7 @@ namespace Backend.Controllers
             try
             {
                 var domainCategory = _mapper.Map<DomainCategory>(categoryDto);
-                var updatedCategory = await _categoryService.UpdateCategory(domainCategory);
+                var updatedCategory = await _mediator.Send(new UpdateCategoryRequest(domainCategory));
                 var updatedCategoryDto = _mapper.Map<CategoryDto>(updatedCategory);
                 return Ok(updatedCategoryDto);
             }
@@ -131,13 +131,13 @@ namespace Backend.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            var category = await _categoryService.GetCategoryById(id);
+            var category = await _mediator.Send(new GetCategoryByIdRequest(id));
             if (category == null)
             {
                 return NotFound();
             }
 
-            await _categoryService.DeleteCategory(id);
+            await _mediator.Send(new DeleteCategoryRequest(id));
             return NoContent();
         }
     }
