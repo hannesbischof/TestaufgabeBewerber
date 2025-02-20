@@ -15,7 +15,7 @@ namespace Backend.Services
         /// <param name="pageNumber">The page number to retrieve.</param>
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of products for the specified page.</returns>
-        Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize);
+        Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize, string? sortBy = null, string? sortOrder = null, string? filter = null);
 
         /// <summary>
         /// Retrieves a product by its ID.

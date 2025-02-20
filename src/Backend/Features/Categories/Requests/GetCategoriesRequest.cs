@@ -9,10 +9,17 @@ namespace Backend.Features.Categories.Requests
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
 
-        public GetCategoriesRequest(int pageNumber, int pageSize)
+        public string? SortBy { get; set; }
+        public string? SortOrder { get; set; }
+        public string? Filter { get; set; }
+
+        public GetCategoriesRequest(int pageNumber, int pageSize, string? sortBy = null, string? sortOrder = null, string? filter = null)
         {
             PageNumber = pageNumber;
             PageSize = pageSize;
+            SortBy = sortBy;
+            SortOrder = sortOrder;
+            Filter = filter;
         }
     }
 
@@ -27,7 +34,7 @@ namespace Backend.Features.Categories.Requests
 
         public async Task<IEnumerable<DomainCategory>> Handle(GetCategoriesRequest request)
         {
-            return await _categoryService.GetCategories(request.PageNumber, request.PageSize);
+            return await _categoryService.GetCategories(request.PageNumber, request.PageSize, request.SortBy, request.SortOrder, request.Filter);
         }
     }
 }

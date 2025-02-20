@@ -154,7 +154,7 @@ else
 
     private async Task LoadProducts()
     {
-        var response = await Http.GetAsync($"api/products?pageNumber={currentPage}&pageSize={pageSize}&sortBy={sortBy}&sortOrder={sortOrder}&filter={filter}");
+        var response = await Http.GetAsync($"api/products?pageNumber={currentPage}&pageSize={pageSize}&sortBy={Uri.EscapeDataString(sortBy)}&sortOrder={Uri.EscapeDataString(sortOrder)}&filter={Uri.EscapeDataString(filter)}");
         if (response.IsSuccessStatusCode)
         {
             var paginatedResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<Product>>();
