@@ -31,7 +31,7 @@ namespace Backend
                       .HasMaxLength(500);
                 entity.HasOne(p => p.Category)
                       .WithMany(c => c.Products)
-                      .HasForeignKey(p => p.CategoryId)
+                      .HasForeignKey(p => p.Category.Id)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 

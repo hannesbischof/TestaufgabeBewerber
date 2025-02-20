@@ -43,10 +43,10 @@ namespace Backend.Services
             ValidateProduct(product);
 
             // Ensure the category exists
-            var category = await _categoryRepository.GetCategoryById(product.CategoryId);
+            var category = await _categoryRepository.GetCategoryById(product.Id);
             if (category == null)
             {
-                throw new ArgumentException($"Category with ID {product.CategoryId} does not exist.");
+                throw new ArgumentException($"Category with ID {product.Category.Id} does not exist.");
             }
 
             return await _productRepository.AddProduct(product);
@@ -58,10 +58,10 @@ namespace Backend.Services
             ValidateProduct(product);
 
             // Ensure the category exists
-            var category = await _categoryRepository.GetCategoryById(product.CategoryId);
+            var category = await _categoryRepository.GetCategoryById(product.Category.Id);
             if (category == null)
             {
-                throw new ArgumentException($"Category with ID {product.CategoryId} does not exist.");
+                throw new ArgumentException($"Category with ID {product.Category.Id} does not exist.");
             }
 
             return await _productRepository.UpdateProduct(product);
