@@ -54,7 +54,8 @@ namespace Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> GetProductById(int id)
         {
-            var product = await _productService.GetProductById(id);
+            var request = new GetProductByIdRequest(id);
+            var product = await _mediator.Send(request);
             if (product == null)
             {
                 return NotFound();
@@ -80,7 +81,8 @@ namespace Backend.Controllers
             try
             {
                 var domainProduct = _mapper.Map<DomainProduct>(productDto);
-                var createdProduct = await _productService.AddProduct(domainProduct);
+                var request = new AddProductRequest(domainProduct);
+                var createdProduct = await _mediator.Send(request);
                 var createdProductDto = _mapper.Map<ProductDto>(createdProduct);
                 return CreatedAtAction(nameof(GetProductById), new { id = createdProductDto.Id }, createdProductDto);
             }
@@ -113,7 +115,8 @@ namespace Backend.Controllers
             try
             {
                 var domainProduct = _mapper.Map<DomainProduct>(productDto);
-                var updatedProduct = await _productService.UpdateProduct(domainProduct);
+                var request = new UpdateProductRequest(domainProduct);
+                var updatedProduct = await _mediator.Send(request);
                 var updatedProductDto = _mapper.Map<ProductDto>(updatedProduct);
                 return Ok(updatedProductDto);
             }
@@ -132,13 +135,15 @@ namespace Backend.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            var product = await _productService.GetProductById(id);
+            var getRequest = new GetProductByIdRequest(id);
+            var product = await _mediator.Send(getRequest);
             if (product == null)
             {
                 return NotFound();
             }
 
-            await _productService.DeleteProduct(id);
+            var deleteRequest = new DeleteProductRequest(id);
+            await _mediator.Send(deleteRequest);
             return NoContent();
         }
     }
