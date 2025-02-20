@@ -19,10 +19,12 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure Identity (if needed)
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+// Register AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Register Swagger for OpenAPI specification
 builder.Services.AddSwaggerGen(c =>
@@ -38,10 +40,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-
-// Register AutoMapper
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddScoped<ICategoryService, CategoryService>());
 
 var app = builder.Build();
 

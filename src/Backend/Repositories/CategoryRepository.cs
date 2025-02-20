@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using Backend.Models;
+using Backend.Models.Domain;
 
 namespace Backend.Repositories
 {
@@ -10,9 +12,12 @@ namespace Backend.Repositories
     {
         private readonly AppDbContext _context;
 
-        public CategoryRepository(AppDbContext context)
+        private readonly IMapper _mapper;
+
+        public CategoryRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -21,12 +26,13 @@ namespace Backend.Repositories
         /// <param name="pageNumber">The page number to retrieve.</param>
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of categories for the specified page.</returns>
-        public async Task<IEnumerable<Category>> GetCategories(int pageNumber, int pageSize)
+        public async Task<IEnumerable<DomainCategory>> GetCategories(int pageNumber, int pageSize)
         {
-            return await _context.Categories
+            var categories = await _context.Categories
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+            return _mapper.Map<IEnumerable<DomainCategory>>(categories);
         }
 
         /// <summary>
@@ -34,9 +40,10 @@ namespace Backend.Repositories
         /// </summary>
         /// <param name="id">The ID of the category to retrieve.</param>
         /// <returns>The category with the specified ID, or null if not found.</returns>
-        public async Task<Category> GetCategoryById(int id)
+        public async Task<DomainCategory> GetCategoryById(int id)
         {
-            return await _context.Categories.FindAsync(id);
+            var category = await _context.Categories.FindAsync(id);
+            return _mapper.Map<DomainCategory>(category);
         }
 
         /// <summary>
@@ -44,11 +51,12 @@ namespace Backend.Repositories
         /// </summary>
         /// <param name="category">The category to add.</param>
         /// <returns>The added category.</returns>
-        public async Task<Category> AddCategory(Category category)
+        public async Task<DomainCategory> AddCategory(DomainCategory domainCategory)
         {
+            var category = _mapper.Map<Category>(domainCategory);
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
-            return category;
+            return _mapper.Map<DomainCategory>(category);
         }
 
         /// <summary>
@@ -56,11 +64,12 @@ namespace Backend.Repositories
         /// </summary>
         /// <param name="category">The category with updated information.</param>
         /// <returns>The updated category.</returns>
-        public async Task<Category> UpdateCategory(Category category)
+        public async Task<DomainCategory> UpdateCategory(DomainCategory domainCategory)
         {
+            var category = _mapper.Map<Category>(domainCategory);
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
-            return category;
+            return _mapper.Map<DomainCategory>(category);
         }
 
         /// <summary>
