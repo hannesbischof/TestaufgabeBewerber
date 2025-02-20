@@ -62,7 +62,7 @@ namespace Backend.Repositories
         /// <returns>A list of products for the specified category and page.</returns>
         public async Task<IEnumerable<DomainProduct>> GetProducts(int categoryId, int pageNumber, int pageSize, string sortBy = "Name", string sortOrder = "asc", string filter = null)
         {
-            var query = _context.Products.Where(p => p.CategoryId == categoryId).AsQueryable();
+            var query = _context.Products.Where(p => p.Category.Id == categoryId).AsQueryable();
 
             if (!string.IsNullOrEmpty(filter))
             {

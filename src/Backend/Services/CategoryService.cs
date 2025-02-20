@@ -54,12 +54,6 @@ namespace Backend.Services
             await _categoryRepository.DeleteCategory(id);
         }
 
-        /// <inheritdoc />
-        public async Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize, string? sortBy = null, string? sortOrder = null, string? filter = null)
-        {
-            return await _categoryRepository.GetProducts(pageNumber, pageSize, sortBy, sortOrder, filter);
-        }
-
         /// <summary>
         /// Validates the category's properties.
         /// </summary>
