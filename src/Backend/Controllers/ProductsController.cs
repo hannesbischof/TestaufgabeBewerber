@@ -38,9 +38,9 @@ namespace Backend.Controllers
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of products for the specified page.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts(int pageNumber = 1, int pageSize = 10, string? sortBy = null, string? sortOrder = null, string? filter = null)
         {
-            var request = new GetProductsRequest(pageNumber, pageSize);
+            var request = new GetProductsRequest(pageNumber, pageSize, sortBy, sortOrder, filter);
             var products = await _mediator.Send(request);
             var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
             return Ok(productDtos);

@@ -26,9 +26,9 @@ namespace Backend.Services
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize)
+        public async Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize, string sortBy = null, string sortOrder = null, string filter = null)
         {
-            return await _productRepository.GetProducts(pageNumber, pageSize);
+            return await _productRepository.GetProducts(pageNumber, pageSize, sortBy, sortOrder, filter);
         }
 
         /// <inheritdoc />

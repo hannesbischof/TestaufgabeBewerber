@@ -26,13 +26,28 @@ namespace Backend.Repositories
         /// <param name="pageNumber">The page number to retrieve.</param>
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of products for the specified page.</returns>
-        public async Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize)
+        public async Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize, string sortBy = null, string sortOrder = "asc", string filter = null)
         {
-            var products = await _context.Products
-                .Include(p => p.Category)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            var query = _context.Products.Include(p => p.Category).AsQueryable();
+
+            // Apply filtering
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query = query.Where(p => p.Name.Contains(filter) || p.Description.Contains(filter));
+            }
+
+            // Apply sorting
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                query = sortOrder.ToLower() == "desc"
+                    ? query.OrderByDescending(e => EF.Property<object>(e, sortBy))
+                    : query.OrderBy(e => EF.Property<object>(e, sortBy));
+            }
+
+            // Apply pagination
+            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            var products = await query.ToListAsync();
             return _mapper.Map<IEnumerable<DomainProduct>>(products);
         }
 

@@ -23,9 +23,9 @@ namespace Backend.Services
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<DomainCategory>> GetCategories(int pageNumber, int pageSize)
+        public async Task<IEnumerable<DomainCategory>> GetCategories(int pageNumber, int pageSize, string? sortBy = null, string? sortOrder = null, string? filter = null)
         {
-            return await _categoryRepository.GetCategories(pageNumber, pageSize);
+            return await _categoryRepository.GetCategories(pageNumber, pageSize, sortBy, sortOrder, filter);
         }
 
         /// <inheritdoc />
@@ -52,6 +52,12 @@ namespace Backend.Services
         public async Task DeleteCategory(int id)
         {
             await _categoryRepository.DeleteCategory(id);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize, string? sortBy = null, string? sortOrder = null, string? filter = null)
+        {
+            return await _categoryRepository.GetProducts(pageNumber, pageSize, sortBy, sortOrder, filter);
         }
 
         /// <summary>
