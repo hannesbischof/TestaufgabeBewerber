@@ -31,7 +31,15 @@ else
                         <td><InputText @bind-Value="editingProduct.Name" class="form-control" /></td>
                         <td><InputNumber @bind-Value="editingProduct.Price" class="form-control" /></td>
                         <td><InputText @bind-Value="editingProduct.Description" class="form-control" /></td>
-                        <td><InputNumber @bind-Value="editingProduct.CategoryId" class="form-control" /></td>
+                        <td>
+                            <select @bind="editingProduct.CategoryId" class="form-control">
+                                <option value="">Select a category</option>
+                                @foreach (var category in categories)
+                                {
+                                    <option value="@category.Id">@category.Name</option>
+                                }
+                            </select>
+                        </td>
                         <td>
                             <button class="btn btn-success" @onclick="SaveProduct">Save</button>
                             <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
@@ -44,7 +52,7 @@ else
                         <td>@product.Name</td>
                         <td>@product.Price</td>
                         <td>@product.Description</td>
-                        <td>@product.CategoryId</td>
+                        <td>@categories.FirstOrDefault(c => c.Id == product.CategoryId)?.Name</td>
                         <td>
                             <button class="btn btn-primary" @onclick="() => EditProduct(product)">Edit</button>
                             <button class="btn btn-danger" @onclick="() => DeleteProduct(product.Id)">Delete</button>
@@ -82,8 +90,14 @@ else
             </div>
 
             <div class="form-group">
-                <label for="categoryId">Category ID</label>
-                <InputNumber id="categoryId" class="form-control" @bind-Value="newProduct.CategoryId" />
+                <label for="categoryId">Category</label>
+                <select id="categoryId" class="form-control" @bind="newProduct.CategoryId">
+                    <option value="">Select a category</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </select>
                 <ValidationMessage For="@(() => newProduct.CategoryId)" />
             </div>
 
@@ -95,6 +109,7 @@ else
 
 @code {
     private List<Product>? products;
+    private List<Category>? categories;
     private Product? editingProduct;
     private Product newProduct = new Product();
     private bool showCreateForm = false;
@@ -102,11 +117,17 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadProducts();
+        await LoadCategories();
     }
 
     private async Task LoadProducts()
     {
         products = await Http.GetFromJsonAsync<List<Product>>("api/products");
+    }
+
+    private async Task LoadCategories()
+    {
+        categories = await Http.GetFromJsonAsync<List<Category>>("api/categories");
     }
 
     private void EditProduct(Product product)
