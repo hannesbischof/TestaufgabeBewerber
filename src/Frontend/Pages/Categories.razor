@@ -1,0 +1,153 @@
+@page "/categories"
+
+@using System.Net.Http.Json
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+
+<h3>Manage Categories</h3>
+
+@if (categories == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in categories)
+            {
+                if (editingCategory?.Id == category.Id)
+                {
+                    <tr>
+                        <td><InputText @bind-Value="editingCategory.Name" class="form-control" /></td>
+                        <td><InputText @bind-Value="editingCategory.Description" class="form-control" /></td>
+                        <td>
+                            <button class="btn btn-success" @onclick="SaveCategory">Save</button>
+                            <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@category.Name</td>
+                        <td>@category.Description</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => EditCategory(category)">Edit</button>
+                            <button class="btn btn-danger" @onclick="() => DeleteCategory(category.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-primary" @onclick="ShowCreateForm">Add New Category</button>
+
+    @if (showCreateForm)
+    {
+        <EditForm Model="@newCategory" OnValidSubmit="CreateCategory">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <InputText id="name" class="form-control" @bind-Value="newCategory.Name" />
+                <ValidationMessage For="@(() => newCategory.Name)" />
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <InputText id="description" class="form-control" @bind-Value="newCategory.Description" />
+                <ValidationMessage For="@(() => newCategory.Description)" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Create</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelCreate">Cancel</button>
+        </EditForm>
+    }
+}
+
+@code {
+    private List<Category>? categories;
+    private Category? editingCategory;
+    private Category newCategory = new Category();
+    private bool showCreateForm = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategories();
+    }
+
+    private async Task LoadCategories()
+    {
+        categories = await Http.GetFromJsonAsync<List<Category>>("api/categories");
+    }
+
+    private void EditCategory(Category category)
+    {
+        editingCategory = new Category
+        {
+            Id = category.Id,
+            Name = category.Name,
+            Description = category.Description
+        };
+    }
+
+    private async Task SaveCategory()
+    {
+        await Http.PutAsJsonAsync($"api/categories/{editingCategory.Id}", editingCategory);
+        editingCategory = null;
+        await LoadCategories();
+    }
+
+    private void CancelEdit()
+    {
+        editingCategory = null;
+    }
+
+    private async Task DeleteCategory(int id)
+    {
+        await Http.DeleteAsync($"api/categories/{id}");
+        await LoadCategories();
+    }
+
+    private void ShowCreateForm()
+    {
+        showCreateForm = true;
+    }
+
+    private async Task CreateCategory()
+    {
+        await Http.PostAsJsonAsync("api/categories", newCategory);
+        newCategory = new Category();
+        showCreateForm = false;
+        await LoadCategories();
+    }
+
+    private void CancelCreate()
+    {
+        newCategory = new Category();
+        showCreateForm = false;
+    }
+
+    public class Category
+    {
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(50, ErrorMessage = "The Name must not exceed 50 characters.")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(200, ErrorMessage = "The Description must not exceed 200 characters.")]
+        public string Description { get; set; } = string.Empty;
+    }
+}

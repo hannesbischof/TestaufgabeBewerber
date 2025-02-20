@@ -56,6 +56,7 @@ TestaufgabeBewerber/
 - SQLite database integration
 - Swagger/OpenAPI documentation
 - Blazor WebAssembly frontend for user interaction
+- Blazor WebAssembly frontend now includes full CRUD operations for Products and Categories, allowing listing, creation, update, and deletion. New pages are available at `/products` and `/categories`.
 - Authentication and Authorization:
   - Only authenticated users (via ASP.NET Core Identity) can create, update, or delete products and categories.
 - Updated Business Rules:
