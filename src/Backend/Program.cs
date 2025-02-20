@@ -9,6 +9,9 @@ using Microsoft.OpenApi.Models;
 using Backend;
 using Backend.Repositories;
 using Backend.Services;
+using Backend.Mediator;
+using Backend.Features.Products.Requests;
+using Backend.Features.Categories.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +44,13 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+// Register Mediator
+builder.Services.AddScoped<IMediator, Mediator>();
+
+// Register Request Handlers
+builder.Services.AddScoped<IRequestHandler<GetProductsRequest, IEnumerable<DomainProduct>>, GetProductsRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<GetCategoriesRequest, IEnumerable<DomainCategory>>, GetCategoriesRequestHandler>();
 
 var app = builder.Build();
 
