@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Backend.Models.DTOs;
-using Backend.Services;
-using Backend.Models.Domain;
+using Backend.Mediator;
+using Backend.Features.Categories.Requests;
 
 namespace Backend.Controllers
 {
@@ -16,16 +16,16 @@ namespace Backend.Controllers
     [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoryService _categoryService;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoriesController"/> class.
         /// </summary>
-        /// <param name="categoryService">The category service.</param>
-        public CategoriesController(ICategoryService categoryService, IMapper mapper)
+        /// <param name="mediator">The mediator service.</param>
+        public CategoriesController(IMediator mediator, IMapper mapper)
         {
-            _categoryService = categoryService;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
@@ -38,7 +38,8 @@ namespace Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories(int pageNumber = 1, int pageSize = 10)
         {
-            var categories = await _categoryService.GetCategories(pageNumber, pageSize);
+            var request = new GetCategoriesRequest(pageNumber, pageSize);
+            var categories = await _mediator.Send(request);
             var categoryDtos = _mapper.Map<IEnumerable<CategoryDto>>(categories);
             return Ok(categoryDtos);
         }

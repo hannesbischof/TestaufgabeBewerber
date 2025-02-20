@@ -16,16 +16,16 @@ namespace Backend.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductService _productService;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductsController"/> class.
         /// </summary>
-        /// <param name="productService">The product service.</param>
-        public ProductsController(IProductService productService, IMapper mapper)
+        /// <param name="mediator">The mediator.</param>
+        public ProductsController(IMediator mediator, IMapper mapper)
         {
-            _productService = productService;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
@@ -38,7 +38,8 @@ namespace Backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts(int pageNumber = 1, int pageSize = 10)
         {
-            var products = await _productService.GetProducts(pageNumber, pageSize);
+            var request = new GetProductsRequest(pageNumber, pageSize);
+            var products = await _mediator.Send(request);
             var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
             return Ok(productDtos);
         }
