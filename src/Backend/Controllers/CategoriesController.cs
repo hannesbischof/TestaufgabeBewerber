@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Backend.Models;
+using AutoMapper;
+using Backend.Models.DTOs;
 using Backend.Services;
 
 namespace Backend.Controllers
@@ -15,14 +16,16 @@ namespace Backend.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CategoriesController"/> class.
         /// </summary>
         /// <param name="categoryService">The category service.</param>
-        public CategoriesController(ICategoryService categoryService)
+        public CategoriesController(ICategoryService categoryService, IMapper mapper)
         {
             _categoryService = categoryService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -32,10 +35,11 @@ namespace Backend.Controllers
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of categories for the specified page.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories(int pageNumber = 1, int pageSize = 10)
         {
             var categories = await _categoryService.GetCategories(pageNumber, pageSize);
-            return Ok(categories);
+            var categoryDtos = _mapper.Map<IEnumerable<CategoryDto>>(categories);
+            return Ok(categoryDtos);
         }
 
         /// <summary>
@@ -44,14 +48,15 @@ namespace Backend.Controllers
         /// <param name="id">The ID of the category to retrieve.</param>
         /// <returns>The category with the specified ID, or a 404 status if not found.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategoryById(int id)
+        public async Task<ActionResult<CategoryDto>> GetCategoryById(int id)
         {
             var category = await _categoryService.GetCategoryById(id);
             if (category == null)
             {
                 return NotFound();
             }
-            return Ok(category);
+            var categoryDto = _mapper.Map<CategoryDto>(category);
+            return Ok(categoryDto);
         }
 
         /// <summary>
@@ -61,7 +66,7 @@ namespace Backend.Controllers
         /// <returns>The added category.</returns>
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Category>> AddCategory([FromBody] Category category)
+        public async Task<ActionResult<CategoryDto>> AddCategory([FromBody] CategoryDto categoryDto)
         {
             if (!ModelState.IsValid)
             {
@@ -70,8 +75,10 @@ namespace Backend.Controllers
 
             try
             {
-                var createdCategory = await _categoryService.AddCategory(category);
-                return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.Id }, createdCategory);
+                var domainCategory = _mapper.Map<DomainCategory>(categoryDto);
+                var createdCategory = await _categoryService.AddCategory(domainCategory);
+                var createdCategoryDto = _mapper.Map<CategoryDto>(createdCategory);
+                return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategoryDto.Id }, createdCategoryDto);
             }
             catch (System.ArgumentException ex)
             {
@@ -87,9 +94,9 @@ namespace Backend.Controllers
         /// <returns>The updated category, or a 404 status if not found.</returns>
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<ActionResult<Category>> UpdateCategory(int id, [FromBody] Category category)
+        public async Task<ActionResult<CategoryDto>> UpdateCategory(int id, [FromBody] CategoryDto categoryDto)
         {
-            if (id != category.Id)
+            if (id != categoryDto.Id)
             {
                 return BadRequest(new { message = "Category ID mismatch." });
             }
@@ -101,8 +108,10 @@ namespace Backend.Controllers
 
             try
             {
-                var updatedCategory = await _categoryService.UpdateCategory(category);
-                return Ok(updatedCategory);
+                var domainCategory = _mapper.Map<DomainCategory>(categoryDto);
+                var updatedCategory = await _categoryService.UpdateCategory(domainCategory);
+                var updatedCategoryDto = _mapper.Map<CategoryDto>(updatedCategory);
+                return Ok(updatedCategoryDto);
             }
             catch (System.ArgumentException ex)
             {

@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Backend.Models;
+using AutoMapper;
+using Backend.Models.DTOs;
+using Backend.Models.Domain;
 using Backend.Services;
 
 namespace Backend.Controllers
@@ -32,10 +34,11 @@ namespace Backend.Controllers
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of products for the specified page.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts(int pageNumber = 1, int pageSize = 10)
         {
             var products = await _productService.GetProducts(pageNumber, pageSize);
-            return Ok(products);
+            var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
+            return Ok(productDtos);
         }
 
         /// <summary>
@@ -44,24 +47,25 @@ namespace Backend.Controllers
         /// <param name="id">The ID of the product to retrieve.</param>
         /// <returns>The product with the specified ID, or a 404 status if not found.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProductById(int id)
+        public async Task<ActionResult<ProductDto>> GetProductById(int id)
         {
             var product = await _productService.GetProductById(id);
             if (product == null)
             {
                 return NotFound();
             }
-            return Ok(product);
+            var productDto = _mapper.Map<ProductDto>(product);
+            return Ok(productDto);
         }
 
         /// <summary>
         /// Adds a new product.
         /// </summary>
-        /// <param name="product">The product to add.</param>
+        /// <param name="productDto">The product to add.</param>
         /// <returns>The added product.</returns>
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Product>> AddProduct([FromBody] Product product)
+        public async Task<ActionResult<ProductDto>> AddProduct([FromBody] ProductDto productDto)
         {
             if (!ModelState.IsValid)
             {
@@ -70,8 +74,10 @@ namespace Backend.Controllers
 
             try
             {
-                var createdProduct = await _productService.AddProduct(product);
-                return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
+                var domainProduct = _mapper.Map<DomainProduct>(productDto);
+                var createdProduct = await _productService.AddProduct(domainProduct);
+                var createdProductDto = _mapper.Map<ProductDto>(createdProduct);
+                return CreatedAtAction(nameof(GetProductById), new { id = createdProductDto.Id }, createdProductDto);
             }
             catch (System.ArgumentException ex)
             {
@@ -83,13 +89,13 @@ namespace Backend.Controllers
         /// Updates an existing product.
         /// </summary>
         /// <param name="id">The ID of the product to update.</param>
-        /// <param name="product">The updated product information.</param>
+        /// <param name="productDto">The updated product information.</param>
         /// <returns>The updated product, or a 404 status if not found.</returns>
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] Product product)
+        public async Task<ActionResult<ProductDto>> UpdateProduct(int id, [FromBody] ProductDto productDto)
         {
-            if (id != product.Id)
+            if (id != productDto.Id)
             {
                 return BadRequest(new { message = "Product ID mismatch." });
             }
@@ -101,8 +107,10 @@ namespace Backend.Controllers
 
             try
             {
-                var updatedProduct = await _productService.UpdateProduct(product);
-                return Ok(updatedProduct);
+                var domainProduct = _mapper.Map<DomainProduct>(productDto);
+                var updatedProduct = await _productService.UpdateProduct(domainProduct);
+                var updatedProductDto = _mapper.Map<ProductDto>(updatedProduct);
+                return Ok(updatedProductDto);
             }
             catch (System.ArgumentException ex)
             {
