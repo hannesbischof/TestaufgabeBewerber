@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Backend.Models;
+using Backend.Models.Domain;
 using Backend.Repositories;
 
 namespace Backend.Services
@@ -26,24 +26,24 @@ namespace Backend.Services
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<Product>> GetProducts(int pageNumber, int pageSize)
+        public async Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize)
         {
             return await _productRepository.GetProducts(pageNumber, pageSize);
         }
 
         /// <inheritdoc />
-        public async Task<Product> GetProductById(int id)
+        public async Task<DomainProduct> GetProductById(int id)
         {
             return await _productRepository.GetProductById(id);
         }
 
         /// <inheritdoc />
-        public async Task<Product> AddProduct(Product product)
+        public async Task<DomainProduct> AddProduct(DomainProduct product)
         {
             ValidateProduct(product);
 
             // Ensure the category exists
-            var category = await _categoryRepository.GetCategoryById(product.Id);
+            var category = await _categoryRepository.GetCategoryById(product.Category.Id);
             if (category == null)
             {
                 throw new ArgumentException($"Category with ID {product.Category.Id} does not exist.");
@@ -53,7 +53,7 @@ namespace Backend.Services
         }
 
         /// <inheritdoc />
-        public async Task<Product> UpdateProduct(Product product)
+        public async Task<DomainProduct> UpdateProduct(DomainProduct product)
         {
             ValidateProduct(product);
 
@@ -77,7 +77,7 @@ namespace Backend.Services
         /// Validates the product's properties.
         /// </summary>
         /// <param name="product">The product to validate.</param>
-        private void ValidateProduct(Product product)
+        private void ValidateProduct(DomainProduct product)
         {
             if (string.IsNullOrWhiteSpace(product.Name) || product.Name.Length < 5)
             {
