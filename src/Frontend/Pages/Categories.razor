@@ -6,6 +6,25 @@
 
 <h3>Manage Categories</h3>
 
+<div class="form-inline mb-3">
+    <label class="mr-2">Sort By:</label>
+    <select @bind="sortBy" class="form-control mr-2">
+        <option value="Name">Name</option>
+        <option value="Description">Description</option>
+    </select>
+
+    <label class="mr-2">Sort Order:</label>
+    <select @bind="sortOrder" class="form-control mr-2">
+        <option value="Ascending">Ascending</option>
+        <option value="Descending">Descending</option>
+    </select>
+
+    <label class="mr-2">Filter:</label>
+    <InputText @bind-Value="filter" class="form-control mr-2" placeholder="Search..." />
+
+    <button class="btn btn-primary" @onclick="LoadCategories">Apply</button>
+</div>
+
 @if (categories == null)
 {
     <p><em>Loading...</em></p>
@@ -83,6 +102,10 @@ else
 
 @code {
     private List<Category>? categories;
+
+    private string sortBy = "Name";
+    private string sortOrder = "Ascending";
+    private string filter = string.Empty;
     private Category? editingCategory;
     private Category newCategory = new Category();
     private bool showCreateForm = false;
@@ -98,7 +121,8 @@ else
 
     private async Task LoadCategories()
     {
-        var response = await Http.GetFromJsonAsync<PaginatedResponse<Category>>($"api/categories?pageNumber={currentPage}&pageSize={pageSize}");
+        var response = await Http.GetFromJsonAsync<PaginatedResponse<Category>>(
+            $"api/categories?pageNumber={currentPage}&pageSize={pageSize}&sortBy={sortBy}&sortOrder={sortOrder}&filter={filter}");
         categories = response.Items;
         totalPages = response.TotalPages;
     }

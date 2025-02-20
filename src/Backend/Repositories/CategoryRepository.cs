@@ -26,24 +26,62 @@ namespace Backend.Repositories
         /// <param name="pageNumber">The page number to retrieve.</param>
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of categories for the specified page.</returns>
-        public async Task<IEnumerable<DomainCategory>> GetCategories(int pageNumber, int pageSize)
+        public async Task<IEnumerable<DomainCategory>> GetCategories(int pageNumber, int pageSize, string sortBy = "Name", string sortOrder = "asc", string filter = null)
         {
-            var categories = await _context.Categories
+            var query = _context.Categories.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query = query.Where(c => c.Name.Contains(filter) || c.Description.Contains(filter));
+            }
+
+            query = sortBy.ToLower() switch
+            {
+                "name" => sortOrder.ToLower() == "desc" ? query.OrderByDescending(c => c.Name) : query.OrderBy(c => c.Name),
+                "description" => sortOrder.ToLower() == "desc" ? query.OrderByDescending(c => c.Description) : query.OrderBy(c => c.Description),
+                _ => query
+            };
+
+            var categories = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+
             return _mapper.Map<IEnumerable<DomainCategory>>(categories);
         }
 
         /// <summary>
-        /// Retrieves a category by its ID.
+        /// Retrieves a paginated list of products for a category.
         /// </summary>
-        /// <param name="id">The ID of the category to retrieve.</param>
-        /// <returns>The category with the specified ID, or null if not found.</returns>
-        public async Task<DomainCategory> GetCategoryById(int id)
+        /// <param name="categoryId">The ID of the category.</param>
+        /// <param name="pageNumber">The page number to retrieve.</param>
+        /// <param name="pageSize">The number of items per page.</param>
+        /// <param name="sortBy">The field to sort by (e.g., "Name").</param>
+        /// <param name="sortOrder">The sort order ("asc" or "desc").</param>
+        /// <param name="filter">The filter string to apply.</param>
+        /// <returns>A list of products for the specified category and page.</returns>
+        public async Task<IEnumerable<DomainProduct>> GetProducts(int categoryId, int pageNumber, int pageSize, string sortBy = "Name", string sortOrder = "asc", string filter = null)
         {
-            var category = await _context.Categories.FindAsync(id);
-            return _mapper.Map<DomainCategory>(category);
+            var query = _context.Products.Where(p => p.CategoryId == categoryId).AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query = query.Where(p => p.Name.Contains(filter) || p.Description.Contains(filter));
+            }
+
+            query = sortBy.ToLower() switch
+            {
+                "name" => sortOrder.ToLower() == "desc" ? query.OrderByDescending(p => p.Name) : query.OrderBy(p => p.Name),
+                "price" => sortOrder.ToLower() == "desc" ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
+                _ => query
+            };
+
+            var products = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<DomainProduct>>(products);
         }
 
         /// <summary>

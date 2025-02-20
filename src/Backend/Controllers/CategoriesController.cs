@@ -37,9 +37,9 @@ namespace Backend.Controllers
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of categories for the specified page.</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories(int pageNumber = 1, int pageSize = 10, string sortBy = null, string sortOrder = null, string filter = null)
         {
-            var request = new GetCategoriesRequest(pageNumber, pageSize);
+            var request = new GetCategoriesRequest(pageNumber, pageSize, sortBy, sortOrder, filter);
             var categories = await _mediator.Send(request);
             var categoryDtos = _mapper.Map<IEnumerable<CategoryDto>>(categories);
             return Ok(categoryDtos);

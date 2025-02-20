@@ -6,6 +6,24 @@
 
 <h3>Manage Products</h3>
 
+<div class="filters">
+    <label for="sortBy">Sort By:</label>
+    <select id="sortBy" @bind="sortBy" class="form-control" @onchange="LoadProducts">
+        <option value="Name">Name</option>
+        <option value="Price">Price</option>
+        <option value="Category">Category</option>
+    </select>
+
+    <label for="sortOrder">Sort Order:</label>
+    <select id="sortOrder" @bind="sortOrder" class="form-control" @onchange="LoadProducts">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+    </select>
+
+    <label for="filter">Filter:</label>
+    <InputText id="filter" class="form-control" @bind-Value="filter" @oninput="LoadProducts" placeholder="Search..." />
+</div>
+
 @if (products == null)
 {
     <p><em>Loading...</em></p>
@@ -130,9 +148,13 @@ else
     private int pageSize = 10;
     private int totalPages;
 
+    private string sortBy = "Name";
+    private string sortOrder = "asc";
+    private string filter = string.Empty;
+
     private async Task LoadProducts()
     {
-        var response = await Http.GetAsync($"api/products?pageNumber={currentPage}&pageSize={pageSize}");
+        var response = await Http.GetAsync($"api/products?pageNumber={currentPage}&pageSize={pageSize}&sortBy={sortBy}&sortOrder={sortOrder}&filter={filter}");
         if (response.IsSuccessStatusCode)
         {
             var paginatedResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<Product>>();
