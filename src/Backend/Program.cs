@@ -35,11 +35,13 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Register application services and repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+// Register AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 
