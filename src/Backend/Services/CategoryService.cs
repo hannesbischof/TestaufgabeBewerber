@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Backend.Models;
+using Backend.Models.Domain;
 using Backend.Repositories;
 
 namespace Backend.Services
@@ -23,26 +23,26 @@ namespace Backend.Services
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<Category>> GetCategories(int pageNumber, int pageSize)
+        public async Task<IEnumerable<DomainCategory>> GetCategories(int pageNumber, int pageSize)
         {
             return await _categoryRepository.GetCategories(pageNumber, pageSize);
         }
 
         /// <inheritdoc />
-        public async Task<Category> GetCategoryById(int id)
+        public async Task<DomainCategory> GetCategoryById(int id)
         {
             return await _categoryRepository.GetCategoryById(id);
         }
 
         /// <inheritdoc />
-        public async Task<Category> AddCategory(Category category)
+        public async Task<DomainCategory> AddCategory(DomainCategory category)
         {
             ValidateCategory(category);
             return await _categoryRepository.AddCategory(category);
         }
 
         /// <inheritdoc />
-        public async Task<Category> UpdateCategory(Category category)
+        public async Task<DomainCategory> UpdateCategory(DomainCategory category)
         {
             ValidateCategory(category);
             return await _categoryRepository.UpdateCategory(category);
@@ -58,7 +58,7 @@ namespace Backend.Services
         /// Validates the category's properties.
         /// </summary>
         /// <param name="category">The category to validate.</param>
-        private void ValidateCategory(Category category)
+        private void ValidateCategory(DomainCategory category)
         {
             if (string.IsNullOrWhiteSpace(category.Name) || category.Name.Length > 50)
             {
