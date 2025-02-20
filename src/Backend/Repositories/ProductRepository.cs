@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Backend.Models;
+using Backend.Models.Domain;
 
 namespace Backend.Repositories
 {

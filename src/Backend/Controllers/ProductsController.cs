@@ -17,14 +17,16 @@ namespace Backend.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductsController"/> class.
         /// </summary>
         /// <param name="productService">The product service.</param>
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, IMapper mapper)
         {
             _productService = productService;
+            _mapper = mapper;
         }
 
         /// <summary>

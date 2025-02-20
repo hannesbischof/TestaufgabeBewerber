@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Backend.Models.DTOs;
 using Backend.Services;
+using Backend.Models.Domain;
 
 namespace Backend.Controllers
 {
