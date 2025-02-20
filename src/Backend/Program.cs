@@ -52,6 +52,14 @@ builder.Services.AddScoped<IMediator, Mediator>();
 // Register Request Handlers
 builder.Services.AddScoped<IRequestHandler<GetProductsRequest, IEnumerable<DomainProduct>>, GetProductsRequestHandler>();
 builder.Services.AddScoped<IRequestHandler<GetCategoriesRequest, IEnumerable<DomainCategory>>, GetCategoriesRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<GetCategoryByIdRequest, DomainCategory?>, GetCategoryByIdRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<UpdateCategoryRequest, DomainCategory>, UpdateCategoryRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<AddCategoryRequest, DomainCategory>, AddCategoryRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<DeleteCategoryRequest, Unit>, DeleteCategoryRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<GetProductByIdRequest, DomainProduct?>, GetProductByIdRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<UpdateProductRequest, DomainProduct>, UpdateProductRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<AddProductRequest, DomainProduct>, AddProductRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<DeleteProductRequest, Unit>, DeleteProductRequestHandler>();
 
 var app = builder.Build();
 
