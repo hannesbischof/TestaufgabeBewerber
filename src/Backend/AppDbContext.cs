@@ -26,6 +26,9 @@ namespace Backend
                 entity.Property(p => p.Price)
                       .IsRequired()
                       .HasColumnType("decimal(18,2)");
+                entity.Property(p => p.Description)
+                      .IsRequired()
+                      .HasMaxLength(500);
                 entity.HasOne(p => p.Category)
                       .WithMany(c => c.Products)
                       .HasForeignKey(p => p.CategoryId)
@@ -39,6 +42,9 @@ namespace Backend
                 entity.Property(c => c.Name)
                       .IsRequired()
                       .HasMaxLength(50);
+                entity.Property(c => c.Description)
+                      .IsRequired()
+                      .HasMaxLength(200);
             });
         }
     }

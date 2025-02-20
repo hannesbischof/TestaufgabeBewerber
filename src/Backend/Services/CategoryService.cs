@@ -64,6 +64,11 @@ namespace Backend.Services
             {
                 throw new ArgumentException("Category name must not be empty and must not exceed 50 characters.");
             }
+
+            if (string.IsNullOrWhiteSpace(category.Description) || category.Description.Length > 200)
+            {
+                throw new ArgumentException("Category description must not be empty and must not exceed 200 characters.");
+            }
         }
     }
 }

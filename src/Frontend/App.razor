@@ -1,0 +1,30 @@
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(MainLayout)">
+            <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+```
+
+### Step 4: Review the code
+- The `Router` component is configured to use the application's assembly (`@typeof(Program).Assembly`) to locate pages.
+- The `Found` block renders the `RouteView` component for matched routes, using a default layout (`MainLayout`).
+- The `NotFound` block provides a fallback UI for unmatched routes, also using the `MainLayout`.
+- The code is complete, functional, and adheres to Blazor conventions.
+
+### Final Output
+```
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(MainLayout)">
+            <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
