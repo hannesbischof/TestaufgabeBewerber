@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Backend.Models;
 using Backend.Services;
 
@@ -59,6 +60,7 @@ namespace Backend.Controllers
         /// <param name="product">The product to add.</param>
         /// <returns>The added product.</returns>
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Product>> AddProduct([FromBody] Product product)
         {
             if (!ModelState.IsValid)
@@ -84,6 +86,7 @@ namespace Backend.Controllers
         /// <param name="product">The updated product information.</param>
         /// <returns>The updated product, or a 404 status if not found.</returns>
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] Product product)
         {
             if (id != product.Id)
@@ -113,6 +116,7 @@ namespace Backend.Controllers
         /// <param name="id">The ID of the product to delete.</param>
         /// <returns>A 204 status if the product was deleted, or a 404 status if not found.</returns>
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await _productService.GetProductById(id);

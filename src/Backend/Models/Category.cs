@@ -13,5 +13,9 @@ namespace Backend.Models
         public string Name { get; set; }
 
         public ICollection<Product> Products { get; set; }
+
+        [Required]
+        [StringLength(200, ErrorMessage = "The Description must not exceed 200 characters.")]
+        public string Description { get; set; }
     }
 }

@@ -18,9 +18,10 @@ namespace Backend.Models
         public decimal Price { get; set; }
 
         [Required]
-        public int CategoryId { get; set; }
+        [StringLength(500, MinimumLength = 10, ErrorMessage = "The Description must be between 10 and 500 characters.")]
+        public string Description { get; set; }
 
-        [ForeignKey("CategoryId")]
+        [Required]
         public Category Category { get; set; }
     }
 }

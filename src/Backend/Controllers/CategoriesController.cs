@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Backend.Models;
 using Backend.Services;
 
@@ -59,6 +60,7 @@ namespace Backend.Controllers
         /// <param name="category">The category to add.</param>
         /// <returns>The added category.</returns>
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Category>> AddCategory([FromBody] Category category)
         {
             if (!ModelState.IsValid)
@@ -84,6 +86,7 @@ namespace Backend.Controllers
         /// <param name="category">The updated category information.</param>
         /// <returns>The updated category, or a 404 status if not found.</returns>
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<Category>> UpdateCategory(int id, [FromBody] Category category)
         {
             if (id != category.Id)
@@ -113,6 +116,7 @@ namespace Backend.Controllers
         /// <param name="id">The ID of the category to delete.</param>
         /// <returns>A 204 status if the category was deleted, or a 404 status if not found.</returns>
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var category = await _categoryService.GetCategoryById(id);

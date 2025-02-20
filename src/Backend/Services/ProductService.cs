@@ -84,6 +84,11 @@ namespace Backend.Services
                 throw new ArgumentException("Product name must be at least 5 characters long.");
             }
 
+            if (string.IsNullOrWhiteSpace(product.Description) || product.Description.Length < 10)
+            {
+                throw new ArgumentException("Product description must be at least 10 characters long.");
+            }
+
             if (product.Price <= 0)
             {
                 throw new ArgumentException("Product price must be greater than 0.");
