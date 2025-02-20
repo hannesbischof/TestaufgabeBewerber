@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using Backend.Models;
 
 namespace Backend.Repositories
@@ -10,9 +11,12 @@ namespace Backend.Repositories
     {
         private readonly AppDbContext _context;
 
-        public ProductRepository(AppDbContext context)
+        private readonly IMapper _mapper;
+
+        public ProductRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -21,13 +25,14 @@ namespace Backend.Repositories
         /// <param name="pageNumber">The page number to retrieve.</param>
         /// <param name="pageSize">The number of items per page.</param>
         /// <returns>A list of products for the specified page.</returns>
-        public async Task<IEnumerable<Product>> GetProducts(int pageNumber, int pageSize)
+        public async Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize)
         {
-            return await _context.Products
+            var products = await _context.Products
                 .Include(p => p.Category)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+            return _mapper.Map<IEnumerable<DomainProduct>>(products);
         }
 
         /// <summary>
@@ -35,11 +40,12 @@ namespace Backend.Repositories
         /// </summary>
         /// <param name="id">The ID of the product to retrieve.</param>
         /// <returns>The product with the specified ID, or null if not found.</returns>
-        public async Task<Product> GetProductById(int id)
+        public async Task<DomainProduct> GetProductById(int id)
         {
-            return await _context.Products
+            var product = await _context.Products
                 .Include(p => p.Category)
                 .FirstOrDefaultAsync(p => p.Id == id);
+            return _mapper.Map<DomainProduct>(product);
         }
 
         /// <summary>
@@ -47,11 +53,12 @@ namespace Backend.Repositories
         /// </summary>
         /// <param name="product">The product to add.</param>
         /// <returns>The added product.</returns>
-        public async Task<Product> AddProduct(Product product)
+        public async Task<DomainProduct> AddProduct(DomainProduct domainProduct)
         {
+            var product = _mapper.Map<Product>(domainProduct);
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
-            return product;
+            return _mapper.Map<DomainProduct>(product);
         }
 
         /// <summary>
@@ -59,11 +66,12 @@ namespace Backend.Repositories
         /// </summary>
         /// <param name="product">The product with updated information.</param>
         /// <returns>The updated product.</returns>
-        public async Task<Product> UpdateProduct(Product product)
+        public async Task<DomainProduct> UpdateProduct(DomainProduct domainProduct)
         {
+            var product = _mapper.Map<Product>(domainProduct);
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
-            return product;
+            return _mapper.Map<DomainProduct>(product);
         }
 
         /// <summary>
