@@ -1,40 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <!-- xUnit Testing Framework -->
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
-
-    <!-- Moq for Mocking Dependencies -->
-    <PackageReference Include="Moq" Version="4.18.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- Reference to the Backend Project -->
-    <ProjectReference Include="..\..\src\Backend\Backend.csproj" />
-  </ItemGroup>
-
-</Project>
-```
-
-### Step 4: Review
-1. The file includes `xUnit` and `Moq` as dependencies, fulfilling the requirements for the testing framework and mocking library.
-2. The `Backend.csproj` is referenced to allow testing of the backend components.
-3. The target framework is set to `.NET 6`, aligning with the repository's prerequisites.
-4. The project is marked as non-packable (`<IsPackable>false</IsPackable>`), as it is a test project.
-
-### Final Output
-```
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

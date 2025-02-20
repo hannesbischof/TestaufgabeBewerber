@@ -10,6 +10,8 @@ using Backend.Models.Domain;
 using Backend.Controllers;
 using Microsoft.Data.Sqlite;
 using Xunit;
+using AutoMapper;
+using System.Threading;
 
 namespace Backend.Tests.Controllers
 {
