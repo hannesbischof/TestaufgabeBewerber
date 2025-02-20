@@ -124,5 +124,15 @@ namespace Backend.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+        /// <summary>
+        /// Retrieves a category by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the category to retrieve.</param>
+        /// <returns>The category with the specified ID, or null if not found.</returns>
+        public async Task<DomainCategory> GetCategoryById(int id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            return _mapper.Map<DomainCategory>(category);
+        }
     }
 }
