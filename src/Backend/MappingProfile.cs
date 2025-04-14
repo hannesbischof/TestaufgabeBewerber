@@ -10,9 +10,6 @@ namespace Backend
     /// </summary>
     public class MappingProfile : Profile
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MappingProfile"/> class.
-        /// </summary>
         public MappingProfile()
         {
             // Category mappings
@@ -24,10 +21,16 @@ namespace Backend
             CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<Product, DomainProduct>()
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
+                .ForMember(dest => dest.Manufacturer, opt => opt.MapFrom(src => src.Manufacturer))
                 .ReverseMap();
             CreateMap<DomainProduct, ProductDto>()
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id))
+                .ForMember(dest => dest.ManufacturerId, opt => opt.MapFrom(src => src.Manufacturer.Id))
                 .ReverseMap();
+
+            // New: Manufacturer mappings
+            CreateMap<Manufacturer, ManufacturerDto>().ReverseMap();
+            CreateMap<Manufacturer, DomainManufacturer>().ReverseMap();
         }
     }
 }

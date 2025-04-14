@@ -21,7 +21,18 @@ namespace Backend.Models
         [StringLength(500, MinimumLength = 10, ErrorMessage = "The Description must be between 10 and 500 characters.")]
         public string Description { get; set; }
 
+        // Foreign key for Category
+        [Required]
+        public int CategoryId { get; set; }
+
         [Required]
         public Category Category { get; set; }
+
+        // New: Foreign key for Manufacturer
+        [Required]
+        public int ManufacturerId { get; set; }
+
+        [Required]
+        public Manufacturer Manufacturer { get; set; }
     }
 }
