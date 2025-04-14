@@ -12,6 +12,7 @@ using Backend.Services;
 using Backend.Mediator;
 using Backend.Features.Products.Requests;
 using Backend.Features.Categories.Requests;
+using Backend.Features.Manufacturers.Requests;
 using Backend.Models.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,23 +44,35 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
+
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
 
 // Register Mediator
 builder.Services.AddScoped<IMediator, Mediator>();
 
-// Register Request Handlers
+// Register Request Handlers for Products
 builder.Services.AddScoped<IRequestHandler<GetProductsRequest, IEnumerable<DomainProduct>>, GetProductsRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<GetProductByIdRequest, DomainProduct?>, GetProductByIdRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<AddProductRequest, DomainProduct>, AddProductRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<UpdateProductRequest, DomainProduct>, UpdateProductRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<DeleteProductRequest, Unit>, DeleteProductRequestHandler>();
+
+// Register Request Handlers for Categories
 builder.Services.AddScoped<IRequestHandler<GetCategoriesRequest, IEnumerable<DomainCategory>>, GetCategoriesRequestHandler>();
 builder.Services.AddScoped<IRequestHandler<GetCategoryByIdRequest, DomainCategory?>, GetCategoryByIdRequestHandler>();
-builder.Services.AddScoped<IRequestHandler<UpdateCategoryRequest, DomainCategory>, UpdateCategoryRequestHandler>();
 builder.Services.AddScoped<IRequestHandler<AddCategoryRequest, DomainCategory>, AddCategoryRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<UpdateCategoryRequest, DomainCategory>, UpdateCategoryRequestHandler>();
 builder.Services.AddScoped<IRequestHandler<DeleteCategoryRequest, Unit>, DeleteCategoryRequestHandler>();
-builder.Services.AddScoped<IRequestHandler<GetProductByIdRequest, DomainProduct?>, GetProductByIdRequestHandler>();
-builder.Services.AddScoped<IRequestHandler<UpdateProductRequest, DomainProduct>, UpdateProductRequestHandler>();
-builder.Services.AddScoped<IRequestHandler<AddProductRequest, DomainProduct>, AddProductRequestHandler>();
-builder.Services.AddScoped<IRequestHandler<DeleteProductRequest, Unit>, DeleteProductRequestHandler>();
+
+// Register Request Handlers for Manufacturers
+builder.Services.AddScoped<IRequestHandler<GetManufacturersRequest, IEnumerable<DomainManufacturer>>, GetManufacturersRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<GetManufacturerByIdRequest, DomainManufacturer?>, GetManufacturerByIdRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<AddManufacturerRequest, DomainManufacturer>, AddManufacturerRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<UpdateManufacturerRequest, DomainManufacturer>, UpdateManufacturerRequestHandler>();
+builder.Services.AddScoped<IRequestHandler<DeleteManufacturerRequest, Unit>, DeleteManufacturerRequestHandler>();
 
 var app = builder.Build();
 

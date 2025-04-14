@@ -13,70 +13,72 @@ namespace Backend.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IManufacturerRepository _manufacturerRepository;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProductService"/> class.
-        /// </summary>
-        /// <param name="productRepository">The product repository.</param>
-        /// <param name="categoryRepository">The category repository.</param>
-        public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository)
+        public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository, IManufacturerRepository manufacturerRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _manufacturerRepository = manufacturerRepository;
         }
 
-        /// <inheritdoc />
         public async Task<IEnumerable<DomainProduct>> GetProducts(int pageNumber, int pageSize, string sortBy = null, string sortOrder = null, string filter = null)
         {
             return await _productRepository.GetProducts(pageNumber, pageSize, sortBy, sortOrder, filter);
         }
 
-        /// <inheritdoc />
         public async Task<DomainProduct> GetProductById(int id)
         {
             return await _productRepository.GetProductById(id);
         }
 
-        /// <inheritdoc />
         public async Task<DomainProduct> AddProduct(DomainProduct product)
         {
             ValidateProduct(product);
 
-            // Ensure the category exists
+            // Ensure the category exists.
             var category = await _categoryRepository.GetCategoryById(product.Category.Id);
             if (category == null)
             {
                 throw new ArgumentException($"Category with ID {product.Category.Id} does not exist.");
+            }
+
+            // Ensure the manufacturer exists.
+            var manufacturer = await _manufacturerRepository.GetManufacturerById(product.Manufacturer.Id);
+            if (manufacturer == null)
+            {
+                throw new ArgumentException($"Manufacturer with ID {product.Manufacturer.Id} does not exist.");
             }
 
             return await _productRepository.AddProduct(product);
         }
 
-        /// <inheritdoc />
         public async Task<DomainProduct> UpdateProduct(DomainProduct product)
         {
             ValidateProduct(product);
 
-            // Ensure the category exists
+            // Ensure the category exists.
             var category = await _categoryRepository.GetCategoryById(product.Category.Id);
             if (category == null)
             {
                 throw new ArgumentException($"Category with ID {product.Category.Id} does not exist.");
             }
 
+            // Ensure the manufacturer exists.
+            var manufacturer = await _manufacturerRepository.GetManufacturerById(product.Manufacturer.Id);
+            if (manufacturer == null)
+            {
+                throw new ArgumentException($"Manufacturer with ID {product.Manufacturer.Id} does not exist.");
+            }
+
             return await _productRepository.UpdateProduct(product);
         }
 
-        /// <inheritdoc />
         public async Task DeleteProduct(int id)
         {
             await _productRepository.DeleteProduct(id);
         }
 
-        /// <summary>
-        /// Validates the product's properties.
-        /// </summary>
-        /// <param name="product">The product to validate.</param>
         private void ValidateProduct(DomainProduct product)
         {
             if (string.IsNullOrWhiteSpace(product.Name) || product.Name.Length < 5)

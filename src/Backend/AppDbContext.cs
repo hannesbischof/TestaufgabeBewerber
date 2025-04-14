@@ -11,6 +11,7 @@ namespace Backend
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Manufacturer> Manufacturers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,7 +32,11 @@ namespace Backend
                       .HasMaxLength(500);
                 entity.HasOne(p => p.Category)
                       .WithMany(c => c.Products)
-                      .HasForeignKey(p => p.Category.Id)
+                      .HasForeignKey("CategoryId")
+                      .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(p => p.Manufacturer)
+                      .WithMany(m => m.Products)
+                      .HasForeignKey(p => p.ManufacturerId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -45,6 +50,18 @@ namespace Backend
                 entity.Property(c => c.Description)
                       .IsRequired()
                       .HasMaxLength(200);
+            });
+
+            // Configure Manufacturer entity
+            modelBuilder.Entity<Manufacturer>(entity =>
+            {
+                entity.HasKey(m => m.Id);
+                entity.Property(m => m.Name)
+                      .IsRequired()
+                      .HasMaxLength(100);
+                entity.Property(m => m.Description)
+                      .IsRequired()
+                      .HasMaxLength(500);
             });
         }
     }

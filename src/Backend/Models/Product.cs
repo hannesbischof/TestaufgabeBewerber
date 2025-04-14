@@ -22,6 +22,13 @@ namespace Backend.Models
         public string Description { get; set; }
 
         [Required]
+        public int CategoryId { get; set; }
+        [Required]
         public Category Category { get; set; }
+
+        [Required]
+        public int ManufacturerId { get; set; }
+        [Required]
+        public Manufacturer Manufacturer { get; set; }
     }
 }
